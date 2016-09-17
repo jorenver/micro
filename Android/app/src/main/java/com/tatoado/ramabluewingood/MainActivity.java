@@ -1,5 +1,8 @@
 package com.tatoado.ramabluewingood;
 
+import com.google.zxing.integration.IntentIntegrator;
+import com.google.zxing.integration.IntentResult;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -21,12 +24,8 @@ import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
-    Button btn1, btn2,btn3,btn4,btn5,btn6,btna,btnb,btnc;
-    TextView txtArduino, txtString, txtStringLength, sensorView0, sensorView1, sensorView2, sensorView3;
-    TextView txtSendorLDR;
-    Handler bluetoothIn;
+    Button btn1, btn2,btn3,btn4,btn5,btn6,btna,btnb,btnc, btnLeche, btnScan;
 
-    final int handlerState = 0;        				 //used to identify handler message
     private BluetoothAdapter btAdapter = null;
     private BluetoothSocket btSocket = null;
     private StringBuilder recDataString = new StringBuilder();
@@ -56,51 +55,9 @@ public class MainActivity extends Activity {
         btna = (Button) findViewById(R.id.buttona);
         btnb = (Button) findViewById(R.id.buttonb);
         btnc = (Button) findViewById(R.id.buttonc);
-        txtString = (TextView) findViewById(R.id.txtString);
-        txtStringLength = (TextView) findViewById(R.id.testView1);
-        sensorView0 = (TextView) findViewById(R.id.sensorView0);
-        sensorView1 = (TextView) findViewById(R.id.sensorView1);
-        sensorView2 = (TextView) findViewById(R.id.sensorView2);
-        sensorView3 = (TextView) findViewById(R.id.sensorView3);
+        btnLeche = (Button)findViewById(R.id.btnLeche);
+        btnScan = (Button)findViewById(R.id.btnScan);
 
-        //txtSendorLDR = (TextView) findViewById(R.id.tv_sendorldr);
-
-
-        bluetoothIn = new Handler() {
-            public void handleMessage(android.os.Message msg) {
-                if (msg.what == handlerState) {										//if message is what we want
-                    String readMessage = (String) msg.obj;                                                                // msg.arg1 = bytes from connect thread
-                    recDataString.append(readMessage);      								//keep appending to string until ~
-                    int endOfLineIndex = recDataString.indexOf("~");                    // determine the end-of-line
-                    if (endOfLineIndex > 0) {                                           // make sure there data before ~
-                        String dataInPrint = recDataString.substring(0, endOfLineIndex);    // extract string
-                        txtString.setText("Datos recibidos = " + dataInPrint);
-                        int dataLength = dataInPrint.length();							//get length of data received
-                        txtStringLength.setText("Tamaño del String = " + String.valueOf(dataLength));
-
-                        if (recDataString.charAt(0) == '#')								//if it starts with # we know it is what we are looking for
-                        {
-                            String sensor0 = recDataString.substring(1, 5);             //get sensor value from string between indices 1-5
-                            String sensor1 = recDataString.substring(6, 10);            //same again...
-                            String sensor2 = recDataString.substring(11, 15);
-                            String sensor3 = recDataString.substring(16, 20);
-
-                            if(sensor0.equals("1.00"))
-                            sensorView0.setText("Encendido");	//update the textviews with sensor values
-                            else
-                                sensorView0.setText("Apagado");	//update the textviews with sensor values
-                            sensorView1.setText(sensor1);
-                            sensorView2.setText(sensor2);
-                            sensorView3.setText(sensor3);
-                            //sensorView3.setText(" Sensor 3 Voltage = " + sensor3 + "V");
-                        }
-                        recDataString.delete(0, recDataString.length()); 					//clear all string data
-                        // strIncom =" ";
-                        dataInPrint = " ";
-                    }
-                }
-            }
-        };
 
         btAdapter = BluetoothAdapter.getDefaultAdapter();       // get Bluetooth adapter
         checkBTState();
@@ -109,8 +66,8 @@ public class MainActivity extends Activity {
         // Set up onClick listeners for buttons to send 1 or 0 to turn on/off LED
         btn1.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-                mConnectedThread.write("000150Leche     ");    // Send "0" via Bluetooth
-                Toast.makeText(getBaseContext(), "000150Leche     ", Toast.LENGTH_SHORT).show();
+                mConnectedThread.write("1");    // Send "0" via Bluetooth
+                Toast.makeText(getBaseContext(), "1", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -162,6 +119,25 @@ public class MainActivity extends Activity {
                 Toast.makeText(getBaseContext(), "c", Toast.LENGTH_SHORT).show();
             }
         });
+
+        btnLeche.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mConnectedThread.write("000150lecheleche");
+                Toast.makeText(getBaseContext(),"000150lecheleche", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        btnScan.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Se instancia un objeto de la clase IntentIntegrator
+                IntentIntegrator scanIntegrator = new IntentIntegrator(MainActivity.this);
+                //Se procede con el proceso de scaneo
+                scanIntegrator.initiateScan();
+            }
+        });
+
     }
 
 
@@ -224,6 +200,28 @@ public class MainActivity extends Activity {
         }
     }
 
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        //Se obtiene el resultado del proceso de scaneo y se parsea
+        IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
+        if (scanningResult != null) {
+            //Quiere decir que se obtuvo resultado pro lo tanto:
+            //Desplegamos en pantalla el contenido del código de barra scaneado
+            String scanContent = scanningResult.getContents();
+            mConnectedThread.interrupt();
+            onPause();
+            onResume();
+            mConnectedThread.write(scanContent);
+            Toast.makeText(getBaseContext(),scanContent, Toast.LENGTH_SHORT).show();
+
+        }else{
+            //Quiere decir que NO se obtuvo resultado
+            Toast toast = Toast.makeText(getApplicationContext(),
+                    "No se ha recibido datos del scaneo!", Toast.LENGTH_SHORT);
+            toast.show();
+        }
+    }
+
+
     //Checks that the Android device Bluetooth is available and prompts to be turned on if off
     private void checkBTState() {
 
@@ -265,14 +263,7 @@ public class MainActivity extends Activity {
 
             // Keep looping to listen for received messages
             while (true) {
-                try {
-                    bytes = mmInStream.read(buffer);        	//read bytes from input buffer
-                    String readMessage = new String(buffer, 0, bytes);
-                    // Send the obtained bytes to the UI Activity via handler
-                    bluetoothIn.obtainMessage(handlerState, bytes, -1, readMessage).sendToTarget();
-                } catch (IOException e) {
-                    break;
-                }
+
             }
         }
         //write method
@@ -292,7 +283,7 @@ public class MainActivity extends Activity {
                 }
             } catch (IOException e) {
                 //if you cannot write, close the application
-                Toast.makeText(getBaseContext(), "La Conexión fallo", Toast.LENGTH_LONG).show();
+                Toast.makeText(getBaseContext(), e.toString(), Toast.LENGTH_LONG).show();
                 finish();
 
             }
