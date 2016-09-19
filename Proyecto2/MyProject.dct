@@ -539,6 +539,7 @@ fullbits
 fvren
 fvren_bit
 gastado
+gastadotemp
 gcen
 gcen_bit
 get_fosc_khz
@@ -787,6 +788,7 @@ numero
 numitems
 oerr
 oerr_bit
+op
 option_reg
 osccon
 osctune
@@ -823,6 +825,7 @@ pdc5_bit
 pdc6
 pdc6_bit
 pedirnumero
+pediropcion
 peie
 peie_bit
 pen

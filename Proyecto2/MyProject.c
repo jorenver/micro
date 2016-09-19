@@ -24,14 +24,14 @@ unsigned short index;
 long int fondos = -1;  //fondos de la persona
 long int precio = 0;  //precio de un producto
 long int gastado = 0; //lo gastado
+long int gastadoTemp=0; //gastado temporal
 short modo=2; //1: modo serial, 2: fondos; 3:cantidad
 short numItems = 1; //numero de items ingresados o retirados
 char buffer[26]; //buffer
 char txt[10]; //char de texto
 short bytesLeidos=0;
+short op; //opcion de eliminar 0=No 1=Si
 
-void Inicializar();
-int int pedirNumero(int N, short bandCero);
 void mostrarFondo();
 void escucharSerial();
 void mostrarProducto();
@@ -79,10 +79,8 @@ void main() {
     ANSELH = 0;
     PORTE = 0;
     TRISE = 0;
-    OSCCON = 0B01111100;
-    buffer[17]='\0';
     
-    UART1_Init(9600);            // Initialize USART module
+    UART1_Init(19200);            // Initialize USART module
     Keypad_Init();                             // (8 bit, 19200 baud rate, no parity bit...)
     Lcd_Init();
     Lcd_Cmd(_LCD_CLEAR);
@@ -92,10 +90,15 @@ void main() {
     for (i=0; i < 255; i++){
         EEPROM_Write(i,0);
     }
-    modo=2;
+    
+    mensaPedirFondos();
+    fondos=pedirNumero(3, 0);
+    fondos = fondos*100;
+    mensaPedirCentavos();
+    fondos += pedirNumero(2, 1);
+
     while(1){
-         if(modo==1)
-            escucharSerial();
+         escucharSerial();
          // nuevo fondo
          if(modo==2){
              mensaPedirFondos();
@@ -103,8 +106,10 @@ void main() {
              fondos = fondos*100;
              mensaPedirCentavos();
              fondos += pedirNumero(2, 1);
+             
              modo=1;//cambio a modo serial
          }
+
      }
 
 }
@@ -131,25 +136,39 @@ void escucharSerial(){
           mostrarProducto();
           Delay_ms(2000);
           //validar si el producto no se ingreso antes
-          i = EEPROM_Read(index);
+          i = EEPROM_Read(index); //i = el numero de productos ingresados
           Lcd_Chr(1,1,i+48);
           Delay_ms(2000);
+          op=0; //no elimnar por defecto
           if(i>0){
-            PORTE=1;
-            //ya se ingreso antes
-            //mensaEliminar();
-            Delay_ms(2000);
+            Lcd_Cmd(_LCD_CLEAR);
+            Lcd_Cmd(_LCD_CURSOR_OFF);
+            Lcd_Out(1, 1, "Eliminar?");
+            //Lcd_Out(2, 1, "No Si");
+            op = pedirOpcion();
+            //op=1 eliminar
+            //op=0 no eliminar
           }
 
           mensaPedirItems();
           numItems = pedirNumero(2, 1);
           numItems = (numItems == 0)?1:numItems;
-          gastado += numItems*precio;
+          if(op==0){
+               //no eliminar se aumenta lo gastado
+               gastado += numItems*precio;
+               i+=numItems; //se incrementa el numero de items
+          }
+          if(op==1){//eliminar
+               //si el numero de items ingresados es mayor
+               //al numero de items que hay en la eeprom
+               //entonces el numero de items ingresados sera igual
+               //al numero de items que hay en la eeeprom
+               numItems = (numItems>i)?i:numItems;
+               gastado -= numItems*precio;//se disminuye lo gastado
+               i-= numItems;
+          }
 
-          //actualizar eeprom
-          i = EEPROM_Read(buffer[0]);
-          i+=numItems;
-          EEPROM_Write(buffer[0], i);
+          EEPROM_Write(index, i);
 
           break;
         }
@@ -168,6 +187,7 @@ void mostrarFondo(){
     Lcd_Cmd(_LCD_CURSOR_OFF);
     Lcd_Out(1, 1, "Fondos:$");
     Lcd_Out(2, 1, "Exceso:$");
+    
     if(fondos - gastado > 0){
         imprimirDecimal(fondos - gastado, 1,9);
         imprimirDecimal(0, 2,9);

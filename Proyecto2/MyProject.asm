@@ -131,10 +131,10 @@ _agregarDigito:
 	MOVLW      128
 	SUBWF      R0+0, 0
 	BTFSS      STATUS+0, 2
-	GOTO       L__agregarDigito61
+	GOTO       L__agregarDigito74
 	MOVLW      48
 	SUBWF      _kp+0, 0
-L__agregarDigito61:
+L__agregarDigito74:
 	BTFSS      STATUS+0, 0
 	GOTO       L_agregarDigito16
 	MOVLW      128
@@ -144,13 +144,13 @@ L__agregarDigito61:
 	MOVLW      127
 	SUBWF      R0+0, 0
 	BTFSS      STATUS+0, 2
-	GOTO       L__agregarDigito62
+	GOTO       L__agregarDigito75
 	MOVF       _kp+0, 0
 	SUBLW      57
-L__agregarDigito62:
+L__agregarDigito75:
 	BTFSS      STATUS+0, 0
 	GOTO       L_agregarDigito16
-L__agregarDigito58:
+L__agregarDigito70:
 ;funciones.c,27 :: 		if(digitos == 0 && kp == '0' ){
 	MOVF       _digitos+0, 0
 	XORLW      0
@@ -163,13 +163,13 @@ L__agregarDigito58:
 	MOVLW      0
 	XORWF      R0+0, 0
 	BTFSS      STATUS+0, 2
-	GOTO       L__agregarDigito63
+	GOTO       L__agregarDigito76
 	MOVLW      48
 	XORWF      _kp+0, 0
-L__agregarDigito63:
+L__agregarDigito76:
 	BTFSS      STATUS+0, 2
 	GOTO       L_agregarDigito19
-L__agregarDigito57:
+L__agregarDigito69:
 ;funciones.c,28 :: 		return 1;
 	MOVLW      1
 	MOVWF      R0+0
@@ -182,10 +182,10 @@ L_agregarDigito19:
 	MOVLW      255
 	XORWF      FARG_agregarDigito_N+1, 0
 	BTFSS      STATUS+0, 2
-	GOTO       L__agregarDigito64
+	GOTO       L__agregarDigito77
 	MOVF       FARG_agregarDigito_N+0, 0
 	XORWF      _digitos+0, 0
-L__agregarDigito64:
+L__agregarDigito77:
 	BTFSS      STATUS+0, 2
 	GOTO       L_agregarDigito20
 ;funciones.c,32 :: 		return 1;
@@ -244,10 +244,10 @@ L_agregarDigito16:
 	MOVLW      0
 	XORWF      R0+0, 0
 	BTFSS      STATUS+0, 2
-	GOTO       L__agregarDigito65
+	GOTO       L__agregarDigito78
 	MOVLW      66
 	XORWF      _kp+0, 0
-L__agregarDigito65:
+L__agregarDigito78:
 	BTFSS      STATUS+0, 2
 	GOTO       L_agregarDigito21
 ;funciones.c,41 :: 		if(digitos==0){
@@ -300,20 +300,20 @@ L_agregarDigito21:
 	MOVLW      0
 	XORWF      R0+0, 0
 	BTFSS      STATUS+0, 2
-	GOTO       L__agregarDigito66
+	GOTO       L__agregarDigito79
 	MOVLW      69
 	XORWF      _kp+0, 0
-L__agregarDigito66:
+L__agregarDigito79:
 	BTFSS      STATUS+0, 2
 	GOTO       L_agregarDigito23
 ;funciones.c,50 :: 		if(numero==0){
 	MOVLW      0
 	XORWF      _numero+1, 0
 	BTFSS      STATUS+0, 2
-	GOTO       L__agregarDigito67
+	GOTO       L__agregarDigito80
 	MOVLW      0
 	XORWF      _numero+0, 0
-L__agregarDigito67:
+L__agregarDigito80:
 	BTFSS      STATUS+0, 2
 	GOTO       L_agregarDigito24
 ;funciones.c,52 :: 		if(bandCero==1){
@@ -390,6 +390,89 @@ L_end_pedirNumero:
 	RETURN
 ; end of _pedirNumero
 
+_pedirOpcion:
+
+;funciones.c,79 :: 		short pedirOpcion(){
+;funciones.c,80 :: 		kp=0;
+	CLRF       _kp+0
+;funciones.c,81 :: 		numero=0;
+	CLRF       _numero+0
+	CLRF       _numero+1
+;funciones.c,82 :: 		digitos=0;
+	CLRF       _digitos+0
+;funciones.c,83 :: 		do{
+L_pedirOpcion33:
+;funciones.c,84 :: 		do{
+L_pedirOpcion36:
+;funciones.c,85 :: 		kp = Keypad_Key_Click();
+	CALL       _Keypad_Key_Click+0
+	MOVF       R0+0, 0
+	MOVWF      _kp+0
+;funciones.c,86 :: 		}while(!kp);
+	MOVF       R0+0, 0
+	BTFSC      STATUS+0, 2
+	GOTO       L_pedirOpcion36
+;funciones.c,87 :: 		getAscii();
+	CALL       _getAscii+0
+;funciones.c,88 :: 		}while(kp!= 'E' && kp!= 'B');
+	MOVLW      0
+	BTFSC      _kp+0, 7
+	MOVLW      255
+	MOVWF      R0+0
+	MOVLW      0
+	XORWF      R0+0, 0
+	BTFSS      STATUS+0, 2
+	GOTO       L__pedirOpcion83
+	MOVLW      69
+	XORWF      _kp+0, 0
+L__pedirOpcion83:
+	BTFSC      STATUS+0, 2
+	GOTO       L__pedirOpcion71
+	MOVLW      0
+	BTFSC      _kp+0, 7
+	MOVLW      255
+	MOVWF      R0+0
+	MOVLW      0
+	XORWF      R0+0, 0
+	BTFSS      STATUS+0, 2
+	GOTO       L__pedirOpcion84
+	MOVLW      66
+	XORWF      _kp+0, 0
+L__pedirOpcion84:
+	BTFSC      STATUS+0, 2
+	GOTO       L__pedirOpcion71
+	GOTO       L_pedirOpcion33
+L__pedirOpcion71:
+;funciones.c,89 :: 		kp = (kp=='E')?1:0;
+	MOVLW      0
+	BTFSC      _kp+0, 7
+	MOVLW      255
+	MOVWF      R0+0
+	MOVLW      0
+	XORWF      R0+0, 0
+	BTFSS      STATUS+0, 2
+	GOTO       L__pedirOpcion85
+	MOVLW      69
+	XORWF      _kp+0, 0
+L__pedirOpcion85:
+	BTFSS      STATUS+0, 2
+	GOTO       L_pedirOpcion41
+	MOVLW      1
+	MOVWF      ?FLOC___pedirOpcionT38+0
+	GOTO       L_pedirOpcion42
+L_pedirOpcion41:
+	CLRF       ?FLOC___pedirOpcionT38+0
+L_pedirOpcion42:
+	MOVF       ?FLOC___pedirOpcionT38+0, 0
+	MOVWF      _kp+0
+;funciones.c,90 :: 		return kp;
+	MOVF       ?FLOC___pedirOpcionT38+0, 0
+	MOVWF      R0+0
+;funciones.c,91 :: 		}
+L_end_pedirOpcion:
+	RETURN
+; end of _pedirOpcion
+
 _interrupt:
 	MOVWF      R15+0
 	SWAPF      STATUS+0, 0
@@ -413,7 +496,7 @@ _interrupt:
 	MOVWF      _modo+0
 ;MyProject.c,46 :: 		}
 L_end_interrupt:
-L__interrupt70:
+L__interrupt87:
 	MOVF       ___savePCLATH+0, 0
 	MOVWF      PCLATH+0
 	SWAPF      ___saveSTATUS+0, 0
@@ -562,29 +645,24 @@ _main:
 	CLRF       PORTE+0
 ;MyProject.c,81 :: 		TRISE = 0;
 	CLRF       TRISE+0
-;MyProject.c,82 :: 		OSCCON = 0B01111100;
-	MOVLW      124
-	MOVWF      OSCCON+0
-;MyProject.c,83 :: 		buffer[17]='\0';
-	CLRF       _buffer+17
-;MyProject.c,85 :: 		UART1_Init(9600);            // Initialize USART module
-	MOVLW      51
+;MyProject.c,83 :: 		UART1_Init(19200);            // Initialize USART module
+	MOVLW      25
 	MOVWF      SPBRG+0
 	BSF        TXSTA+0, 2
 	CALL       _UART1_Init+0
-;MyProject.c,86 :: 		Keypad_Init();                             // (8 bit, 19200 baud rate, no parity bit...)
+;MyProject.c,84 :: 		Keypad_Init();                             // (8 bit, 19200 baud rate, no parity bit...)
 	CALL       _Keypad_Init+0
-;MyProject.c,87 :: 		Lcd_Init();
+;MyProject.c,85 :: 		Lcd_Init();
 	CALL       _Lcd_Init+0
-;MyProject.c,88 :: 		Lcd_Cmd(_LCD_CLEAR);
+;MyProject.c,86 :: 		Lcd_Cmd(_LCD_CLEAR);
 	MOVLW      1
 	MOVWF      FARG_Lcd_Cmd_out_char+0
 	CALL       _Lcd_Cmd+0
-;MyProject.c,89 :: 		Lcd_Cmd(_LCD_CURSOR_OFF);
+;MyProject.c,87 :: 		Lcd_Cmd(_LCD_CURSOR_OFF);
 	MOVLW      12
 	MOVWF      FARG_Lcd_Cmd_out_char+0
 	CALL       _Lcd_Cmd+0
-;MyProject.c,90 :: 		Lcd_Out(1,1, "Cargando...");
+;MyProject.c,88 :: 		Lcd_Out(1,1, "Cargando...");
 	MOVLW      1
 	MOVWF      FARG_Lcd_Out_row+0
 	MOVLW      1
@@ -592,44 +670,26 @@ _main:
 	MOVLW      ?lstr9_MyProject+0
 	MOVWF      FARG_Lcd_Out_text+0
 	CALL       _Lcd_Out+0
-;MyProject.c,92 :: 		for (i=0; i < 255; i++){
+;MyProject.c,90 :: 		for (i=0; i < 255; i++){
 	CLRF       _i+0
-L_main33:
+L_main43:
 	MOVLW      255
 	SUBWF      _i+0, 0
 	BTFSC      STATUS+0, 0
-	GOTO       L_main34
-;MyProject.c,93 :: 		EEPROM_Write(i,0);
+	GOTO       L_main44
+;MyProject.c,91 :: 		EEPROM_Write(i,0);
 	MOVF       _i+0, 0
 	MOVWF      FARG_EEPROM_Write_Address+0
 	CLRF       FARG_EEPROM_Write_data_+0
 	CALL       _EEPROM_Write+0
-;MyProject.c,92 :: 		for (i=0; i < 255; i++){
+;MyProject.c,90 :: 		for (i=0; i < 255; i++){
 	INCF       _i+0, 1
-;MyProject.c,94 :: 		}
-	GOTO       L_main33
-L_main34:
-;MyProject.c,95 :: 		modo=2;
-	MOVLW      2
-	MOVWF      _modo+0
-;MyProject.c,96 :: 		while(1){
-L_main36:
-;MyProject.c,97 :: 		if(modo==1)
-	MOVF       _modo+0, 0
-	XORLW      1
-	BTFSS      STATUS+0, 2
-	GOTO       L_main38
-;MyProject.c,98 :: 		escucharSerial();
-	CALL       _escucharSerial+0
-L_main38:
-;MyProject.c,100 :: 		if(modo==2){
-	MOVF       _modo+0, 0
-	XORLW      2
-	BTFSS      STATUS+0, 2
-	GOTO       L_main39
-;MyProject.c,101 :: 		mensaPedirFondos();
+;MyProject.c,92 :: 		}
+	GOTO       L_main43
+L_main44:
+;MyProject.c,94 :: 		mensaPedirFondos();
 	CALL       _mensaPedirFondos+0
-;MyProject.c,102 :: 		fondos = pedirNumero(3, 0);
+;MyProject.c,95 :: 		fondos=pedirNumero(3, 0);
 	MOVLW      3
 	MOVWF      FARG_pedirNumero_N+0
 	MOVLW      0
@@ -645,7 +705,7 @@ L_main38:
 	MOVLW      255
 	MOVWF      _fondos+2
 	MOVWF      _fondos+3
-;MyProject.c,103 :: 		fondos = fondos*100;
+;MyProject.c,96 :: 		fondos = fondos*100;
 	MOVF       _fondos+0, 0
 	MOVWF      R0+0
 	MOVF       _fondos+1, 0
@@ -668,9 +728,9 @@ L_main38:
 	MOVWF      _fondos+2
 	MOVF       R0+3, 0
 	MOVWF      _fondos+3
-;MyProject.c,104 :: 		mensaPedirCentavos();
+;MyProject.c,97 :: 		mensaPedirCentavos();
 	CALL       _mensaPedirCentavos+0
-;MyProject.c,105 :: 		fondos += pedirNumero(2, 1);
+;MyProject.c,98 :: 		fondos += pedirNumero(2, 1);
 	MOVLW      2
 	MOVWF      FARG_pedirNumero_N+0
 	MOVLW      0
@@ -705,49 +765,136 @@ L_main38:
 	MOVWF      _fondos+2
 	MOVF       R0+3, 0
 	MOVWF      _fondos+3
-;MyProject.c,106 :: 		modo=1;//cambio a modo serial
+;MyProject.c,100 :: 		while(1){
+L_main46:
+;MyProject.c,101 :: 		escucharSerial();
+	CALL       _escucharSerial+0
+;MyProject.c,103 :: 		if(modo==2){
+	MOVF       _modo+0, 0
+	XORLW      2
+	BTFSS      STATUS+0, 2
+	GOTO       L_main48
+;MyProject.c,104 :: 		mensaPedirFondos();
+	CALL       _mensaPedirFondos+0
+;MyProject.c,105 :: 		fondos = pedirNumero(3, 0);
+	MOVLW      3
+	MOVWF      FARG_pedirNumero_N+0
+	MOVLW      0
+	MOVWF      FARG_pedirNumero_N+1
+	CLRF       FARG_pedirNumero_bandCero+0
+	CALL       _pedirNumero+0
+	MOVF       R0+0, 0
+	MOVWF      _fondos+0
+	MOVF       R0+1, 0
+	MOVWF      _fondos+1
+	MOVLW      0
+	BTFSC      _fondos+1, 7
+	MOVLW      255
+	MOVWF      _fondos+2
+	MOVWF      _fondos+3
+;MyProject.c,106 :: 		fondos = fondos*100;
+	MOVF       _fondos+0, 0
+	MOVWF      R0+0
+	MOVF       _fondos+1, 0
+	MOVWF      R0+1
+	MOVF       _fondos+2, 0
+	MOVWF      R0+2
+	MOVF       _fondos+3, 0
+	MOVWF      R0+3
+	MOVLW      100
+	MOVWF      R4+0
+	CLRF       R4+1
+	CLRF       R4+2
+	CLRF       R4+3
+	CALL       _Mul_32x32_U+0
+	MOVF       R0+0, 0
+	MOVWF      _fondos+0
+	MOVF       R0+1, 0
+	MOVWF      _fondos+1
+	MOVF       R0+2, 0
+	MOVWF      _fondos+2
+	MOVF       R0+3, 0
+	MOVWF      _fondos+3
+;MyProject.c,107 :: 		mensaPedirCentavos();
+	CALL       _mensaPedirCentavos+0
+;MyProject.c,108 :: 		fondos += pedirNumero(2, 1);
+	MOVLW      2
+	MOVWF      FARG_pedirNumero_N+0
+	MOVLW      0
+	MOVWF      FARG_pedirNumero_N+1
+	MOVLW      1
+	MOVWF      FARG_pedirNumero_bandCero+0
+	CALL       _pedirNumero+0
+	MOVLW      0
+	BTFSC      R0+1, 7
+	MOVLW      255
+	MOVWF      R0+2
+	MOVWF      R0+3
+	MOVF       _fondos+0, 0
+	ADDWF      R0+0, 1
+	MOVF       _fondos+1, 0
+	BTFSC      STATUS+0, 0
+	INCFSZ     _fondos+1, 0
+	ADDWF      R0+1, 1
+	MOVF       _fondos+2, 0
+	BTFSC      STATUS+0, 0
+	INCFSZ     _fondos+2, 0
+	ADDWF      R0+2, 1
+	MOVF       _fondos+3, 0
+	BTFSC      STATUS+0, 0
+	INCFSZ     _fondos+3, 0
+	ADDWF      R0+3, 1
+	MOVF       R0+0, 0
+	MOVWF      _fondos+0
+	MOVF       R0+1, 0
+	MOVWF      _fondos+1
+	MOVF       R0+2, 0
+	MOVWF      _fondos+2
+	MOVF       R0+3, 0
+	MOVWF      _fondos+3
+;MyProject.c,110 :: 		modo=1;//cambio a modo serial
 	MOVLW      1
 	MOVWF      _modo+0
-;MyProject.c,107 :: 		}
-L_main39:
-;MyProject.c,108 :: 		}
-	GOTO       L_main36
-;MyProject.c,110 :: 		}
+;MyProject.c,111 :: 		}
+L_main48:
+;MyProject.c,113 :: 		}
+	GOTO       L_main46
+;MyProject.c,115 :: 		}
 L_end_main:
 	GOTO       $+0
 ; end of _main
 
 _escucharSerial:
 
-;MyProject.c,113 :: 		void escucharSerial(){
-;MyProject.c,114 :: 		modo=1;
+;MyProject.c,118 :: 		void escucharSerial(){
+;MyProject.c,119 :: 		modo=1;
 	MOVLW      1
 	MOVWF      _modo+0
-;MyProject.c,115 :: 		INTCON.GIE=1;
+;MyProject.c,120 :: 		INTCON.GIE=1;
 	BSF        INTCON+0, 7
-;MyProject.c,116 :: 		INTCON.INTE=1;
+;MyProject.c,121 :: 		INTCON.INTE=1;
 	BSF        INTCON+0, 4
-;MyProject.c,117 :: 		INTCON.INTF=0;
+;MyProject.c,122 :: 		INTCON.INTF=0;
 	BCF        INTCON+0, 1
-;MyProject.c,118 :: 		PORTB.RB7=1;
+;MyProject.c,123 :: 		PORTB.RB7=1;
 	BSF        PORTB+0, 7
-;MyProject.c,119 :: 		mostrarFondo();
+;MyProject.c,124 :: 		mostrarFondo();
 	CALL       _mostrarFondo+0
-;MyProject.c,121 :: 		while(modo==1){
-L_escucharSerial40:
+;MyProject.c,126 :: 		while(modo==1){
+L_escucharSerial49:
 	MOVF       _modo+0, 0
 	XORLW      1
 	BTFSS      STATUS+0, 2
-	GOTO       L_escucharSerial41
-;MyProject.c,122 :: 		if(bytesLeidos==16){
+	GOTO       L_escucharSerial50
+;MyProject.c,127 :: 		if(bytesLeidos==16){
 	MOVF       _bytesLeidos+0, 0
 	XORLW      16
 	BTFSS      STATUS+0, 2
-	GOTO       L_escucharSerial42
-;MyProject.c,123 :: 		index = buffer[0];
+	GOTO       L_escucharSerial51
+;MyProject.c,128 :: 		index = buffer[0];
 	MOVF       _buffer+0, 0
 	MOVWF      _index+0
-;MyProject.c,125 :: 		precio =  (long)10000*(buffer[1]-48);
+;MyProject.c,130 :: 		precio =  (long)10000*(buffer[1]-48);
 	MOVLW      48
 	SUBWF      _buffer+1, 0
 	MOVWF      R0+0
@@ -784,7 +931,7 @@ L_escucharSerial40:
 	MOVWF      _precio+2
 	MOVF       FLOC__escucharSerial+3, 0
 	MOVWF      _precio+3
-;MyProject.c,126 :: 		precio += (long)1000*(buffer[2]-48);
+;MyProject.c,131 :: 		precio += (long)1000*(buffer[2]-48);
 	MOVLW      48
 	SUBWF      _buffer+2, 0
 	MOVWF      R0+0
@@ -827,7 +974,7 @@ L_escucharSerial40:
 	BTFSC      STATUS+0, 0
 	INCFSZ     R0+3, 0
 	ADDWF      _precio+3, 1
-;MyProject.c,127 :: 		precio += (long)100*(buffer[3]-48);
+;MyProject.c,132 :: 		precio += (long)100*(buffer[3]-48);
 	MOVLW      48
 	SUBWF      _buffer+3, 0
 	MOVWF      R0+0
@@ -862,7 +1009,7 @@ L_escucharSerial40:
 	BTFSC      STATUS+0, 0
 	INCFSZ     R0+3, 0
 	ADDWF      _precio+3, 1
-;MyProject.c,128 :: 		precio += (long)10*(buffer[4]-48);
+;MyProject.c,133 :: 		precio += (long)10*(buffer[4]-48);
 	MOVLW      48
 	SUBWF      _buffer+4, 0
 	MOVWF      R0+0
@@ -897,7 +1044,7 @@ L_escucharSerial40:
 	BTFSC      STATUS+0, 0
 	INCFSZ     R0+3, 0
 	ADDWF      _precio+3, 1
-;MyProject.c,129 :: 		precio += (long)(buffer[5]-48);
+;MyProject.c,134 :: 		precio += (long)(buffer[5]-48);
 	MOVLW      48
 	SUBWF      _buffer+5, 0
 	MOVWF      R0+0
@@ -923,32 +1070,32 @@ L_escucharSerial40:
 	BTFSC      STATUS+0, 0
 	INCFSZ     R0+3, 0
 	ADDWF      _precio+3, 1
-;MyProject.c,130 :: 		bytesLeidos=0;
+;MyProject.c,135 :: 		bytesLeidos=0;
 	CLRF       _bytesLeidos+0
-;MyProject.c,131 :: 		mostrarProducto();
+;MyProject.c,136 :: 		mostrarProducto();
 	CALL       _mostrarProducto+0
-;MyProject.c,132 :: 		Delay_ms(2000);
+;MyProject.c,137 :: 		Delay_ms(2000);
 	MOVLW      21
 	MOVWF      R11+0
 	MOVLW      75
 	MOVWF      R12+0
 	MOVLW      190
 	MOVWF      R13+0
-L_escucharSerial43:
+L_escucharSerial52:
 	DECFSZ     R13+0, 1
-	GOTO       L_escucharSerial43
+	GOTO       L_escucharSerial52
 	DECFSZ     R12+0, 1
-	GOTO       L_escucharSerial43
+	GOTO       L_escucharSerial52
 	DECFSZ     R11+0, 1
-	GOTO       L_escucharSerial43
+	GOTO       L_escucharSerial52
 	NOP
-;MyProject.c,134 :: 		i = EEPROM_Read(index);
+;MyProject.c,139 :: 		i = EEPROM_Read(index); //i = el numero de productos ingresados
 	MOVF       _index+0, 0
 	MOVWF      FARG_EEPROM_Read_Address+0
 	CALL       _EEPROM_Read+0
 	MOVF       R0+0, 0
 	MOVWF      _i+0
-;MyProject.c,135 :: 		Lcd_Chr(1,1,i+48);
+;MyProject.c,140 :: 		Lcd_Chr(1,1,i+48);
 	MOVLW      1
 	MOVWF      FARG_Lcd_Chr_row+0
 	MOVLW      1
@@ -957,29 +1104,6 @@ L_escucharSerial43:
 	ADDWF      R0+0, 0
 	MOVWF      FARG_Lcd_Chr_out_char+0
 	CALL       _Lcd_Chr+0
-;MyProject.c,136 :: 		Delay_ms(2000);
-	MOVLW      21
-	MOVWF      R11+0
-	MOVLW      75
-	MOVWF      R12+0
-	MOVLW      190
-	MOVWF      R13+0
-L_escucharSerial44:
-	DECFSZ     R13+0, 1
-	GOTO       L_escucharSerial44
-	DECFSZ     R12+0, 1
-	GOTO       L_escucharSerial44
-	DECFSZ     R11+0, 1
-	GOTO       L_escucharSerial44
-	NOP
-;MyProject.c,137 :: 		if(i>0){
-	MOVF       _i+0, 0
-	SUBLW      0
-	BTFSC      STATUS+0, 0
-	GOTO       L_escucharSerial45
-;MyProject.c,138 :: 		PORTE=1;
-	MOVLW      1
-	MOVWF      PORTE+0
 ;MyProject.c,141 :: 		Delay_ms(2000);
 	MOVLW      21
 	MOVWF      R11+0
@@ -987,19 +1111,46 @@ L_escucharSerial44:
 	MOVWF      R12+0
 	MOVLW      190
 	MOVWF      R13+0
-L_escucharSerial46:
+L_escucharSerial53:
 	DECFSZ     R13+0, 1
-	GOTO       L_escucharSerial46
+	GOTO       L_escucharSerial53
 	DECFSZ     R12+0, 1
-	GOTO       L_escucharSerial46
+	GOTO       L_escucharSerial53
 	DECFSZ     R11+0, 1
-	GOTO       L_escucharSerial46
+	GOTO       L_escucharSerial53
 	NOP
-;MyProject.c,142 :: 		}
-L_escucharSerial45:
-;MyProject.c,144 :: 		mensaPedirItems();
+;MyProject.c,142 :: 		op=0; //no elimnar por defecto
+	CLRF       _op+0
+;MyProject.c,143 :: 		if(i>0){
+	MOVF       _i+0, 0
+	SUBLW      0
+	BTFSC      STATUS+0, 0
+	GOTO       L_escucharSerial54
+;MyProject.c,144 :: 		Lcd_Cmd(_LCD_CLEAR);
+	MOVLW      1
+	MOVWF      FARG_Lcd_Cmd_out_char+0
+	CALL       _Lcd_Cmd+0
+;MyProject.c,145 :: 		Lcd_Cmd(_LCD_CURSOR_OFF);
+	MOVLW      12
+	MOVWF      FARG_Lcd_Cmd_out_char+0
+	CALL       _Lcd_Cmd+0
+;MyProject.c,146 :: 		Lcd_Out(1, 1, "Eliminar?");
+	MOVLW      1
+	MOVWF      FARG_Lcd_Out_row+0
+	MOVLW      1
+	MOVWF      FARG_Lcd_Out_column+0
+	MOVLW      ?lstr10_MyProject+0
+	MOVWF      FARG_Lcd_Out_text+0
+	CALL       _Lcd_Out+0
+;MyProject.c,148 :: 		op = pedirOpcion();
+	CALL       _pedirOpcion+0
+	MOVF       R0+0, 0
+	MOVWF      _op+0
+;MyProject.c,151 :: 		}
+L_escucharSerial54:
+;MyProject.c,153 :: 		mensaPedirItems();
 	CALL       _mensaPedirItems+0
-;MyProject.c,145 :: 		numItems = pedirNumero(2, 1);
+;MyProject.c,154 :: 		numItems = pedirNumero(2, 1);
 	MOVLW      2
 	MOVWF      FARG_pedirNumero_N+0
 	MOVLW      0
@@ -1009,22 +1160,27 @@ L_escucharSerial45:
 	CALL       _pedirNumero+0
 	MOVF       R0+0, 0
 	MOVWF      _numItems+0
-;MyProject.c,146 :: 		numItems = (numItems == 0)?1:numItems;
+;MyProject.c,155 :: 		numItems = (numItems == 0)?1:numItems;
 	MOVF       R0+0, 0
 	XORLW      0
 	BTFSS      STATUS+0, 2
-	GOTO       L_escucharSerial47
+	GOTO       L_escucharSerial55
 	MOVLW      1
-	MOVWF      ?FLOC___escucharSerialT94+0
-	GOTO       L_escucharSerial48
-L_escucharSerial47:
+	MOVWF      ?FLOC___escucharSerialT101+0
+	GOTO       L_escucharSerial56
+L_escucharSerial55:
 	MOVF       _numItems+0, 0
-	MOVWF      ?FLOC___escucharSerialT94+0
-L_escucharSerial48:
-	MOVF       ?FLOC___escucharSerialT94+0, 0
+	MOVWF      ?FLOC___escucharSerialT101+0
+L_escucharSerial56:
+	MOVF       ?FLOC___escucharSerialT101+0, 0
 	MOVWF      _numItems+0
-;MyProject.c,147 :: 		gastado += numItems*precio;
-	MOVF       ?FLOC___escucharSerialT94+0, 0
+;MyProject.c,156 :: 		if(op==0){
+	MOVF       _op+0, 0
+	XORLW      0
+	BTFSS      STATUS+0, 2
+	GOTO       L_escucharSerial57
+;MyProject.c,158 :: 		gastado += numItems*precio;
+	MOVF       _numItems+0, 0
 	MOVWF      R0+0
 	MOVLW      0
 	BTFSC      R0+0, 7
@@ -1055,86 +1211,145 @@ L_escucharSerial48:
 	BTFSC      STATUS+0, 0
 	INCFSZ     R0+3, 0
 	ADDWF      _gastado+3, 1
-;MyProject.c,150 :: 		i = EEPROM_Read(buffer[0]);
-	MOVF       _buffer+0, 0
-	MOVWF      FARG_EEPROM_Read_Address+0
-	CALL       _EEPROM_Read+0
-	MOVF       R0+0, 0
-	MOVWF      _i+0
-;MyProject.c,151 :: 		i+=numItems;
+;MyProject.c,159 :: 		i+=numItems; //se incrementa el numero de items
 	MOVF       _numItems+0, 0
-	ADDWF      R0+0, 1
+	ADDWF      _i+0, 1
+;MyProject.c,160 :: 		}
+L_escucharSerial57:
+;MyProject.c,161 :: 		if(op==1){//eliminar
+	MOVF       _op+0, 0
+	XORLW      1
+	BTFSS      STATUS+0, 2
+	GOTO       L_escucharSerial58
+;MyProject.c,166 :: 		numItems = (numItems>i)?i:numItems;
+	MOVLW      128
+	MOVWF      R0+0
+	MOVLW      128
+	BTFSC      _numItems+0, 7
+	MOVLW      127
+	SUBWF      R0+0, 0
+	BTFSS      STATUS+0, 2
+	GOTO       L__escucharSerial94
+	MOVF       _numItems+0, 0
+	SUBWF      _i+0, 0
+L__escucharSerial94:
+	BTFSC      STATUS+0, 0
+	GOTO       L_escucharSerial59
+	MOVF       _i+0, 0
+	MOVWF      ?FLOC___escucharSerialT108+0
+	GOTO       L_escucharSerial60
+L_escucharSerial59:
+	MOVF       _numItems+0, 0
+	MOVWF      ?FLOC___escucharSerialT108+0
+L_escucharSerial60:
+	MOVF       ?FLOC___escucharSerialT108+0, 0
+	MOVWF      _numItems+0
+;MyProject.c,167 :: 		gastado -= numItems*precio;//se disminuye lo gastado
+	MOVF       ?FLOC___escucharSerialT108+0, 0
+	MOVWF      R0+0
+	MOVLW      0
+	BTFSC      R0+0, 7
+	MOVLW      255
+	MOVWF      R0+1
+	MOVWF      R0+2
+	MOVWF      R0+3
+	MOVF       _precio+0, 0
+	MOVWF      R4+0
+	MOVF       _precio+1, 0
+	MOVWF      R4+1
+	MOVF       _precio+2, 0
+	MOVWF      R4+2
+	MOVF       _precio+3, 0
+	MOVWF      R4+3
+	CALL       _Mul_32x32_U+0
 	MOVF       R0+0, 0
-	MOVWF      _i+0
-;MyProject.c,152 :: 		EEPROM_Write(buffer[0], i);
-	MOVF       _buffer+0, 0
+	SUBWF      _gastado+0, 1
+	MOVF       R0+1, 0
+	BTFSS      STATUS+0, 0
+	INCFSZ     R0+1, 0
+	SUBWF      _gastado+1, 1
+	MOVF       R0+2, 0
+	BTFSS      STATUS+0, 0
+	INCFSZ     R0+2, 0
+	SUBWF      _gastado+2, 1
+	MOVF       R0+3, 0
+	BTFSS      STATUS+0, 0
+	INCFSZ     R0+3, 0
+	SUBWF      _gastado+3, 1
+;MyProject.c,168 :: 		i-= numItems;
+	MOVF       ?FLOC___escucharSerialT108+0, 0
+	SUBWF      _i+0, 1
+;MyProject.c,169 :: 		}
+L_escucharSerial58:
+;MyProject.c,171 :: 		EEPROM_Write(index, i);
+	MOVF       _index+0, 0
 	MOVWF      FARG_EEPROM_Write_Address+0
-	MOVF       R0+0, 0
+	MOVF       _i+0, 0
 	MOVWF      FARG_EEPROM_Write_data_+0
 	CALL       _EEPROM_Write+0
-;MyProject.c,154 :: 		break;
-	GOTO       L_escucharSerial41
-;MyProject.c,155 :: 		}
-L_escucharSerial42:
-;MyProject.c,157 :: 		if(UART1_Data_Ready()){
+;MyProject.c,173 :: 		break;
+	GOTO       L_escucharSerial50
+;MyProject.c,174 :: 		}
+L_escucharSerial51:
+;MyProject.c,176 :: 		if(UART1_Data_Ready()){
 	CALL       _UART1_Data_Ready+0
 	MOVF       R0+0, 0
 	BTFSC      STATUS+0, 2
-	GOTO       L_escucharSerial49
-;MyProject.c,158 :: 		i = UART1_Read();
+	GOTO       L_escucharSerial61
+;MyProject.c,177 :: 		i = UART1_Read();
 	CALL       _UART1_Read+0
 	MOVF       R0+0, 0
 	MOVWF      _i+0
-;MyProject.c,159 :: 		buffer[bytesLeidos]= i;
+;MyProject.c,178 :: 		buffer[bytesLeidos]= i;
 	MOVF       _bytesLeidos+0, 0
 	ADDLW      _buffer+0
 	MOVWF      FSR
 	MOVF       R0+0, 0
 	MOVWF      INDF+0
-;MyProject.c,160 :: 		bytesLeidos++;
+;MyProject.c,179 :: 		bytesLeidos++;
 	INCF       _bytesLeidos+0, 1
-;MyProject.c,161 :: 		UART1_Write(i);// and send it back
+;MyProject.c,180 :: 		UART1_Write(i);// and send it back
 	MOVF       _i+0, 0
 	MOVWF      FARG_UART1_Write_data_+0
 	CALL       _UART1_Write+0
-;MyProject.c,162 :: 		}
-L_escucharSerial49:
-;MyProject.c,163 :: 		}
-	GOTO       L_escucharSerial40
-L_escucharSerial41:
-;MyProject.c,164 :: 		}
+;MyProject.c,181 :: 		}
+L_escucharSerial61:
+;MyProject.c,182 :: 		}
+	GOTO       L_escucharSerial49
+L_escucharSerial50:
+;MyProject.c,183 :: 		}
 L_end_escucharSerial:
 	RETURN
 ; end of _escucharSerial
 
 _mostrarFondo:
 
-;MyProject.c,166 :: 		void mostrarFondo(){
-;MyProject.c,167 :: 		Lcd_Cmd(_LCD_CLEAR);
+;MyProject.c,185 :: 		void mostrarFondo(){
+;MyProject.c,186 :: 		Lcd_Cmd(_LCD_CLEAR);
 	MOVLW      1
 	MOVWF      FARG_Lcd_Cmd_out_char+0
 	CALL       _Lcd_Cmd+0
-;MyProject.c,168 :: 		Lcd_Cmd(_LCD_CURSOR_OFF);
+;MyProject.c,187 :: 		Lcd_Cmd(_LCD_CURSOR_OFF);
 	MOVLW      12
 	MOVWF      FARG_Lcd_Cmd_out_char+0
 	CALL       _Lcd_Cmd+0
-;MyProject.c,169 :: 		Lcd_Out(1, 1, "Fondos:$");
+;MyProject.c,188 :: 		Lcd_Out(1, 1, "Fondos:$");
 	MOVLW      1
-	MOVWF      FARG_Lcd_Out_row+0
-	MOVLW      1
-	MOVWF      FARG_Lcd_Out_column+0
-	MOVLW      ?lstr10_MyProject+0
-	MOVWF      FARG_Lcd_Out_text+0
-	CALL       _Lcd_Out+0
-;MyProject.c,170 :: 		Lcd_Out(2, 1, "Exceso:$");
-	MOVLW      2
 	MOVWF      FARG_Lcd_Out_row+0
 	MOVLW      1
 	MOVWF      FARG_Lcd_Out_column+0
 	MOVLW      ?lstr11_MyProject+0
 	MOVWF      FARG_Lcd_Out_text+0
 	CALL       _Lcd_Out+0
-;MyProject.c,171 :: 		if(fondos - gastado > 0){
+;MyProject.c,189 :: 		Lcd_Out(2, 1, "Exceso:$");
+	MOVLW      2
+	MOVWF      FARG_Lcd_Out_row+0
+	MOVLW      1
+	MOVWF      FARG_Lcd_Out_column+0
+	MOVLW      ?lstr12_MyProject+0
+	MOVWF      FARG_Lcd_Out_text+0
+	CALL       _Lcd_Out+0
+;MyProject.c,191 :: 		if(fondos - gastado > 0){
 	MOVF       _fondos+0, 0
 	MOVWF      R1+0
 	MOVF       _fondos+1, 0
@@ -1163,21 +1378,21 @@ _mostrarFondo:
 	XORWF      R1+3, 0
 	SUBWF      R0+0, 0
 	BTFSS      STATUS+0, 2
-	GOTO       L__mostrarFondo78
+	GOTO       L__mostrarFondo96
 	MOVF       R1+2, 0
 	SUBLW      0
 	BTFSS      STATUS+0, 2
-	GOTO       L__mostrarFondo78
+	GOTO       L__mostrarFondo96
 	MOVF       R1+1, 0
 	SUBLW      0
 	BTFSS      STATUS+0, 2
-	GOTO       L__mostrarFondo78
+	GOTO       L__mostrarFondo96
 	MOVF       R1+0, 0
 	SUBLW      0
-L__mostrarFondo78:
+L__mostrarFondo96:
 	BTFSC      STATUS+0, 0
-	GOTO       L_mostrarFondo50
-;MyProject.c,172 :: 		imprimirDecimal(fondos - gastado, 1,9);
+	GOTO       L_mostrarFondo62
+;MyProject.c,192 :: 		imprimirDecimal(fondos - gastado, 1,9);
 	MOVF       _gastado+0, 0
 	MOVWF      R0+0
 	MOVF       _gastado+1, 0
@@ -1217,7 +1432,7 @@ L__mostrarFondo78:
 	MOVLW      0
 	MOVWF      FARG_imprimirDecimal_columna+1
 	CALL       _imprimirDecimal+0
-;MyProject.c,173 :: 		imprimirDecimal(0, 2,9);
+;MyProject.c,193 :: 		imprimirDecimal(0, 2,9);
 	CLRF       FARG_imprimirDecimal_decimal+0
 	CLRF       FARG_imprimirDecimal_decimal+1
 	CLRF       FARG_imprimirDecimal_decimal+2
@@ -1231,13 +1446,13 @@ L__mostrarFondo78:
 	MOVLW      0
 	MOVWF      FARG_imprimirDecimal_columna+1
 	CALL       _imprimirDecimal+0
-;MyProject.c,174 :: 		PORTE = 2;
+;MyProject.c,194 :: 		PORTE = 2;
 	MOVLW      2
 	MOVWF      PORTE+0
-;MyProject.c,175 :: 		}
-	GOTO       L_mostrarFondo51
-L_mostrarFondo50:
-;MyProject.c,177 :: 		imprimirDecimal(0, 1, 9);
+;MyProject.c,195 :: 		}
+	GOTO       L_mostrarFondo63
+L_mostrarFondo62:
+;MyProject.c,197 :: 		imprimirDecimal(0, 1, 9);
 	CLRF       FARG_imprimirDecimal_decimal+0
 	CLRF       FARG_imprimirDecimal_decimal+1
 	CLRF       FARG_imprimirDecimal_decimal+2
@@ -1251,7 +1466,7 @@ L_mostrarFondo50:
 	MOVLW      0
 	MOVWF      FARG_imprimirDecimal_columna+1
 	CALL       _imprimirDecimal+0
-;MyProject.c,178 :: 		imprimirDecimal(gastado-fondos, 2,9);
+;MyProject.c,198 :: 		imprimirDecimal(gastado-fondos, 2,9);
 	MOVF       _fondos+0, 0
 	MOVWF      R0+0
 	MOVF       _fondos+1, 0
@@ -1291,29 +1506,29 @@ L_mostrarFondo50:
 	MOVLW      0
 	MOVWF      FARG_imprimirDecimal_columna+1
 	CALL       _imprimirDecimal+0
-;MyProject.c,179 :: 		PORTE= 1;
+;MyProject.c,199 :: 		PORTE= 1;
 	MOVLW      1
 	MOVWF      PORTE+0
-;MyProject.c,180 :: 		}
-L_mostrarFondo51:
-;MyProject.c,182 :: 		}
+;MyProject.c,200 :: 		}
+L_mostrarFondo63:
+;MyProject.c,202 :: 		}
 L_end_mostrarFondo:
 	RETURN
 ; end of _mostrarFondo
 
 _imprimirDecimal:
 
-;MyProject.c,184 :: 		void imprimirDecimal(long int decimal, int fila, int columna){
-;MyProject.c,185 :: 		txt[6]= 0;
+;MyProject.c,204 :: 		void imprimirDecimal(long int decimal, int fila, int columna){
+;MyProject.c,205 :: 		txt[6]= 0;
 	CLRF       _txt+6
-;MyProject.c,186 :: 		for(i=0; i< 2; i++){
+;MyProject.c,206 :: 		for(i=0; i< 2; i++){
 	CLRF       _i+0
-L_imprimirDecimal52:
+L_imprimirDecimal64:
 	MOVLW      2
 	SUBWF      _i+0, 0
 	BTFSC      STATUS+0, 0
-	GOTO       L_imprimirDecimal53
-;MyProject.c,187 :: 		txt[5-i] = decimal%10 + 48;
+	GOTO       L_imprimirDecimal65
+;MyProject.c,207 :: 		txt[5-i] = decimal%10 + 48;
 	MOVF       _i+0, 0
 	SUBLW      5
 	MOVWF      R0+0
@@ -1351,7 +1566,7 @@ L_imprimirDecimal52:
 	MOVWF      FSR
 	MOVF       R0+0, 0
 	MOVWF      INDF+0
-;MyProject.c,188 :: 		decimal = decimal/10;
+;MyProject.c,208 :: 		decimal = decimal/10;
 	MOVLW      10
 	MOVWF      R4+0
 	CLRF       R4+1
@@ -1374,46 +1589,46 @@ L_imprimirDecimal52:
 	MOVWF      FARG_imprimirDecimal_decimal+2
 	MOVF       R0+3, 0
 	MOVWF      FARG_imprimirDecimal_decimal+3
-;MyProject.c,186 :: 		for(i=0; i< 2; i++){
+;MyProject.c,206 :: 		for(i=0; i< 2; i++){
 	INCF       _i+0, 1
-;MyProject.c,189 :: 		}
-	GOTO       L_imprimirDecimal52
-L_imprimirDecimal53:
-;MyProject.c,190 :: 		txt[3]= '.';
+;MyProject.c,209 :: 		}
+	GOTO       L_imprimirDecimal64
+L_imprimirDecimal65:
+;MyProject.c,210 :: 		txt[3]= '.';
 	MOVLW      46
 	MOVWF      _txt+3
-;MyProject.c,191 :: 		txt[2]= '0';
+;MyProject.c,211 :: 		txt[2]= '0';
 	MOVLW      48
 	MOVWF      _txt+2
-;MyProject.c,192 :: 		txt[1] = ' ';
+;MyProject.c,212 :: 		txt[1] = ' ';
 	MOVLW      32
 	MOVWF      _txt+1
-;MyProject.c,193 :: 		txt[0] = ' ';
+;MyProject.c,213 :: 		txt[0] = ' ';
 	MOVLW      32
 	MOVWF      _txt+0
-;MyProject.c,194 :: 		i=0;
+;MyProject.c,214 :: 		i=0;
 	CLRF       _i+0
-;MyProject.c,195 :: 		while(decimal!=0){
-L_imprimirDecimal55:
+;MyProject.c,215 :: 		while(decimal!=0){
+L_imprimirDecimal67:
 	MOVLW      0
 	MOVWF      R0+0
 	XORWF      FARG_imprimirDecimal_decimal+3, 0
 	BTFSS      STATUS+0, 2
-	GOTO       L__imprimirDecimal80
+	GOTO       L__imprimirDecimal98
 	MOVF       R0+0, 0
 	XORWF      FARG_imprimirDecimal_decimal+2, 0
 	BTFSS      STATUS+0, 2
-	GOTO       L__imprimirDecimal80
+	GOTO       L__imprimirDecimal98
 	MOVF       R0+0, 0
 	XORWF      FARG_imprimirDecimal_decimal+1, 0
 	BTFSS      STATUS+0, 2
-	GOTO       L__imprimirDecimal80
+	GOTO       L__imprimirDecimal98
 	MOVF       FARG_imprimirDecimal_decimal+0, 0
 	XORLW      0
-L__imprimirDecimal80:
+L__imprimirDecimal98:
 	BTFSC      STATUS+0, 2
-	GOTO       L_imprimirDecimal56
-;MyProject.c,196 :: 		txt[2-i] = decimal%10 + 48;
+	GOTO       L_imprimirDecimal68
+;MyProject.c,216 :: 		txt[2-i] = decimal%10 + 48;
 	MOVF       _i+0, 0
 	SUBLW      2
 	MOVWF      R0+0
@@ -1451,7 +1666,7 @@ L__imprimirDecimal80:
 	MOVWF      FSR
 	MOVF       R0+0, 0
 	MOVWF      INDF+0
-;MyProject.c,197 :: 		decimal= decimal/10;
+;MyProject.c,217 :: 		decimal= decimal/10;
 	MOVLW      10
 	MOVWF      R4+0
 	CLRF       R4+1
@@ -1474,12 +1689,12 @@ L__imprimirDecimal80:
 	MOVWF      FARG_imprimirDecimal_decimal+2
 	MOVF       R0+3, 0
 	MOVWF      FARG_imprimirDecimal_decimal+3
-;MyProject.c,198 :: 		i++;
+;MyProject.c,218 :: 		i++;
 	INCF       _i+0, 1
-;MyProject.c,199 :: 		}
-	GOTO       L_imprimirDecimal55
-L_imprimirDecimal56:
-;MyProject.c,201 :: 		Lcd_Out(fila, columna, txt);
+;MyProject.c,219 :: 		}
+	GOTO       L_imprimirDecimal67
+L_imprimirDecimal68:
+;MyProject.c,221 :: 		Lcd_Out(fila, columna, txt);
 	MOVF       FARG_imprimirDecimal_fila+0, 0
 	MOVWF      FARG_Lcd_Out_row+0
 	MOVF       FARG_imprimirDecimal_columna+0, 0
@@ -1487,23 +1702,23 @@ L_imprimirDecimal56:
 	MOVLW      _txt+0
 	MOVWF      FARG_Lcd_Out_text+0
 	CALL       _Lcd_Out+0
-;MyProject.c,202 :: 		}
+;MyProject.c,222 :: 		}
 L_end_imprimirDecimal:
 	RETURN
 ; end of _imprimirDecimal
 
 _mostrarProducto:
 
-;MyProject.c,204 :: 		void mostrarProducto(){
-;MyProject.c,207 :: 		Lcd_Cmd(_LCD_CLEAR);
+;MyProject.c,224 :: 		void mostrarProducto(){
+;MyProject.c,227 :: 		Lcd_Cmd(_LCD_CLEAR);
 	MOVLW      1
 	MOVWF      FARG_Lcd_Cmd_out_char+0
 	CALL       _Lcd_Cmd+0
-;MyProject.c,208 :: 		Lcd_Cmd(_LCD_CURSOR_OFF);
+;MyProject.c,228 :: 		Lcd_Cmd(_LCD_CURSOR_OFF);
 	MOVLW      12
 	MOVWF      FARG_Lcd_Cmd_out_char+0
 	CALL       _Lcd_Cmd+0
-;MyProject.c,209 :: 		Lcd_Out(1,1, &buffer[6]);
+;MyProject.c,229 :: 		Lcd_Out(1,1, &buffer[6]);
 	MOVLW      1
 	MOVWF      FARG_Lcd_Out_row+0
 	MOVLW      1
@@ -1511,7 +1726,7 @@ _mostrarProducto:
 	MOVLW      _buffer+6
 	MOVWF      FARG_Lcd_Out_text+0
 	CALL       _Lcd_Out+0
-;MyProject.c,210 :: 		Lcd_Chr(2,1, '$');
+;MyProject.c,230 :: 		Lcd_Chr(2,1, '$');
 	MOVLW      2
 	MOVWF      FARG_Lcd_Chr_row+0
 	MOVLW      1
@@ -1519,7 +1734,7 @@ _mostrarProducto:
 	MOVLW      36
 	MOVWF      FARG_Lcd_Chr_out_char+0
 	CALL       _Lcd_Chr+0
-;MyProject.c,211 :: 		imprimirDecimal(precio, 2 , 2);
+;MyProject.c,231 :: 		imprimirDecimal(precio, 2 , 2);
 	MOVF       _precio+0, 0
 	MOVWF      FARG_imprimirDecimal_decimal+0
 	MOVF       _precio+1, 0
@@ -1537,7 +1752,7 @@ _mostrarProducto:
 	MOVLW      0
 	MOVWF      FARG_imprimirDecimal_columna+1
 	CALL       _imprimirDecimal+0
-;MyProject.c,213 :: 		}
+;MyProject.c,233 :: 		}
 L_end_mostrarProducto:
 	RETURN
 ; end of _mostrarProducto

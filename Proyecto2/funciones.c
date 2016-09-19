@@ -75,3 +75,17 @@ int pedirNumero(int N, short bandCero){
     }while(agregarDigito(N, bandCero));
    return numero;
 }
+
+short pedirOpcion(){
+    kp=0;
+    numero=0;
+    digitos=0;
+    do{
+       do{
+          kp = Keypad_Key_Click();
+       }while(!kp);
+       getAscii();
+    }while(kp!= 'E' && kp!= 'B');
+    kp = (kp=='E')?1:0;
+   return kp;
+}

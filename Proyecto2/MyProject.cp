@@ -1,5 +1,5 @@
-#line 1 "C:/Users/jorge/Documents/oswaldo/Proyecto2/MyProject.c"
-#line 1 "c:/users/jorge/documents/oswaldo/proyecto2/funciones.c"
+#line 1 "C:/Users/Oswaldo Bayona/Documents/microcontroladores/Proyecto2/MyProject.c"
+#line 1 "c:/users/oswaldo bayona/documents/microcontroladores/proyecto2/funciones.c"
 int numero =0;
 short digitos = 0;
 short kp = 0;
@@ -77,7 +77,21 @@ int pedirNumero(int N, short bandCero){
  }while(agregarDigito(N, bandCero));
  return numero;
 }
-#line 3 "C:/Users/jorge/Documents/oswaldo/Proyecto2/MyProject.c"
+
+short pedirOpcion(){
+ kp=0;
+ numero=0;
+ digitos=0;
+ do{
+ do{
+ kp = Keypad_Key_Click();
+ }while(!kp);
+ getAscii();
+ }while(kp!= 'E' && kp!= 'B');
+ kp = (kp=='E')?1:0;
+ return kp;
+}
+#line 3 "C:/Users/Oswaldo Bayona/Documents/microcontroladores/Proyecto2/MyProject.c"
 char keypadPort at PORTB;
 
 
@@ -102,14 +116,14 @@ unsigned short index;
 long int fondos = -1;
 long int precio = 0;
 long int gastado = 0;
+long int gastadoTemp=0;
 short modo=2;
 short numItems = 1;
 char buffer[26];
 char txt[10];
 short bytesLeidos=0;
+short op;
 
-void Inicializar();
-int int pedirNumero(int N, short bandCero);
 void mostrarFondo();
 void escucharSerial();
 void mostrarProducto();
@@ -157,10 +171,8 @@ void main() {
  ANSELH = 0;
  PORTE = 0;
  TRISE = 0;
- OSCCON = 0B01111100;
- buffer[17]='\0';
 
- UART1_Init(9600);
+ UART1_Init(19200);
  Keypad_Init();
  Lcd_Init();
  Lcd_Cmd(_LCD_CLEAR);
@@ -170,9 +182,14 @@ void main() {
  for (i=0; i < 255; i++){
  EEPROM_Write(i,0);
  }
- modo=2;
+
+ mensaPedirFondos();
+ fondos=pedirNumero(3, 0);
+ fondos = fondos*100;
+ mensaPedirCentavos();
+ fondos += pedirNumero(2, 1);
+
  while(1){
- if(modo==1)
  escucharSerial();
 
  if(modo==2){
@@ -181,8 +198,10 @@ void main() {
  fondos = fondos*100;
  mensaPedirCentavos();
  fondos += pedirNumero(2, 1);
+
  modo=1;
  }
+
  }
 
 }
@@ -212,22 +231,36 @@ void escucharSerial(){
  i = EEPROM_Read(index);
  Lcd_Chr(1,1,i+48);
  Delay_ms(2000);
+ op=0;
  if(i>0){
- PORTE=1;
+ Lcd_Cmd(_LCD_CLEAR);
+ Lcd_Cmd(_LCD_CURSOR_OFF);
+ Lcd_Out(1, 1, "Eliminar?");
+
+ op = pedirOpcion();
 
 
- Delay_ms(2000);
  }
 
  mensaPedirItems();
  numItems = pedirNumero(2, 1);
  numItems = (numItems == 0)?1:numItems;
+ if(op==0){
+
  gastado += numItems*precio;
-
-
- i = EEPROM_Read(buffer[0]);
  i+=numItems;
- EEPROM_Write(buffer[0], i);
+ }
+ if(op==1){
+
+
+
+
+ numItems = (numItems>i)?i:numItems;
+ gastado -= numItems*precio;
+ i-= numItems;
+ }
+
+ EEPROM_Write(index, i);
 
  break;
  }
@@ -246,6 +279,7 @@ void mostrarFondo(){
  Lcd_Cmd(_LCD_CURSOR_OFF);
  Lcd_Out(1, 1, "Fondos:$");
  Lcd_Out(2, 1, "Exceso:$");
+
  if(fondos - gastado > 0){
  imprimirDecimal(fondos - gastado, 1,9);
  imprimirDecimal(0, 2,9);
